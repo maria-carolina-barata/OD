@@ -5,6 +5,7 @@ Created on Wed Mar 20 12:19:48 2024
 @author: joao_
 """
 
+import random
 
 import numpy as np
 from pulp import LpProblem, LpMinimize, LpVariable, lpSum, value
@@ -242,5 +243,172 @@ for key_ini in sorted(new_graph_with_nodes, key=lambda x: int(x)):
         
         
         
+    
+#%% definiçao de distancia entre arcs em duas maneiras diferentes
+# Uma tem como input os arcs da seguinte maneira (('11','10'),('5','12'))
+# A outra tem como input os acrs da seguinte maneira (7,32,arc_dict)
+
+def distancia_entre_arcs_nos(arc1,arc2):
+    
+    node1 = arc1[1]
+    node2 = arc2[0]
+    
+    path = dict_paths_all[node1][node2]
+    
+    
+    
+    Custo = shortest_distance_matrix[int(node1)-1,int(node2)-1]
+    return path, Custo
+
+
         
+        
+path,custo = distancia_entre_arcs_nos(('11','10'),('5','12')) #teste da funçao  (FUNCTIONA)
+
+print('Path = ',path)
+print('Custo = ', custo)
+      
+
+    
+def distancia_entre_arcs_numerados(arc1, arc2, informaçao_graph):
+    
+    
+    node1 = informaçao_graph[int(arc1)]['node2']
+    node2 = informaçao_graph[int(arc2)]['node1']
+    
+    path = dict_paths_all[node1][node2]
+    
+    Custo = shortest_distance_matrix[int(node1)-1,int(node2)-1]
+    return path, Custo
+    
+path1,custo1 = distancia_entre_arcs_numerados(41,20,arc_dict) #teste da funçao (FUNCTIONA)
+print('Path1 = ',path1)
+print('Custo1 = ', custo1)
+    
+    
+
+#%% criar as matrizes de 1s e 0s para saber em que arcs é necessarioo veiculo passar e em que dias
+
+def transformar_matriz(matrix_day1):
+    
+
+    #mete apenas a primeira linha com 0s e 1s, as outras ficam todas a 0    
+    for j in range(len(matrix_day1[0])):
+        # Check if all elements in the column are 1
+        if all(row[j] == 1 for row in matrix_day1):
+            # Find the first occurrence of 1 in the column
+            found_one = False
+            for i in range(len(matrix_day1)):
+                if matrix_day1[i][j] == 1 and not found_one:
+                    found_one = True
+                elif matrix_day1[i][j] == 1 and found_one:
+                    matrix_day1[i][j] = 0
+    
+    # Probability of a 1 passing to another row
+    probability = 4/5
+    
+    # Iterate over each column
+    for j in range(len(matrix_day1[0])):
+        # Check if the first row has a 1 in this column
+        if matrix_day1[0][j] == 1:
+            # If yes, randomly decide if it should pass to another row
+            if random.random() < probability:
+                # Find a random row to pass the 1 to
+                new_row_index = random.randint(1, len(matrix_day1) - 1)
+                # Move the 1 to the new row and set it to 0 in the first row
+                matrix_day1[new_row_index][j] = 1
+                matrix_day1[0][j] = 0
+ 
+    array = np.array(matrix_day1, dtype=np.float64)
+    return array
+
+
+matrix_day1 =[]
+
+linhas = numbTrucks
+colunas = arcs
+
+#cria uma matriz de 1s e 0s (1 o truck precisa de passar la; 0 nao precisa)
+for i in range(linhas):
+    row=[]
+    for key in arc_dict:
+        
+        if arc_dict[key]['freq'] == 5:
+            element = 1
+        elif arc_dict[key]['freq'] == 4:
+            
+            element = 1
+        elif arc_dict[key]['freq'] == 3:
+            
+            element = 1
+        else:
+            element = 0
+        row.append(element)
+    matrix_day1.append(row)
+            
+matrix_day1 = transformar_matriz(matrix_day1)
+
+matrix_day2 = []
+for i in range(linhas):
+    row=[]
+    for key in arc_dict:
+        
+        if arc_dict[key]['freq'] == 5:
+            element = 1
+        elif arc_dict[key]['freq'] == 4:
+            
+            element = 1
+        elif arc_dict[key]['freq'] == 2:
+            
+            element = 1
+        else:
+            element = 0
+        row.append(element)
+    matrix_day2.append(row)
+matrix_day2 = transformar_matriz(matrix_day2)
+
+matrix_day3=[]
+for i in range(linhas):
+    row=[]
+    for key in arc_dict:
+        
+        if arc_dict[key]['freq'] == 5:
+            element = 1
+        elif arc_dict[key]['freq'] == 3:
+            
+            element = 1
+        
+        else:
+            element = 0
+        row.append(element)
+    matrix_day3.append(row)
+matrix_day3 = transformar_matriz(matrix_day3)
+
+matrix_day4=[]
+for i in range(linhas):
+    row=[]
+    for key in arc_dict:
+        
+        if arc_dict[key]['freq'] == 5:
+            element = 1
+        elif arc_dict[key]['freq'] == 4:
+            
+            element = 1
+        
+        else:
+            element = 0
+        row.append(element)
+    matrix_day4.append(row)
+matrix_day4 = transformar_matriz(matrix_day4)
+
+matrix_day5=[]
+for i in range(linhas):
+    row=[]
+    for key in arc_dict:
+        element=1
+       
+        row.append(element)
+    matrix_day5.append(row)
+matrix_day5 = transformar_matriz(matrix_day5)
+       
         
