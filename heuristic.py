@@ -4,7 +4,7 @@ import re
 arcs = {}
 
 # Open the file and read line by line
-with open('gdb1.txt', 'r') as file:
+with open('testeProj.txt', 'r') as file:
     for line_num, line in enumerate(file, 1): 
         # Check if the line contains the keyword 'arc=' which indicates an arc entry
         if 'arc=' in line:
@@ -50,12 +50,12 @@ def heuristic_pcarp_weekly(arcs, vehicles, num_days, arc_service_frequency):
     for day in range(num_days):
         arcs_serviced_today = set()
         arcs_serviced_demand1 = set()
-        last_node_visited = {vehicle: 1 for vehicle in range(len(vehicles[day]))}
+        #last_node_visited = {vehicle: 1 for vehicle in range(len(vehicles[day]))}
 
         for vehicle in range(len(vehicles[day])):
             current_vehicle = vehicle
             visited_arcs = set()
-            last_node = 1
+            #last_node = 1
 
             daily_route = [(current_vehicle, 1)]
             last_arc_end = 1
